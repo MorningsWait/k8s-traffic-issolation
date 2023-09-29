@@ -1,0 +1,132 @@
+#Create below labels for NS
+#kubectl --insecure-skip-tls-verify label namespace/nginx-ingress namespace/twistlock namespace/kube-system namespace/kube-public purpose=system
+#$context = <CLUSTER_NAME>;kubectl --insecure-skip-tls-verify --context $context label namespace/nginx-ingress namespace/twistlock namespace/kube-system namespace/kube-public purpose=system
+
+#Network Policy to allow all traffic within NS for "agent-onboarding"
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-same-namespace-traffic
+  namespace: agent-onboarding
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+---
+#Network Policy to allow all traffic from ingress,prisma,system for "agent-onboarding"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-ingress-prisma-system
+  namespace: agent-onboarding
+spec:
+  podSelector:
+    matchLabels:
+#      app: web
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels: 
+          purpose: system            
+---    
+#Network Policy to deny all traffic from other NS for "agent-onboarding"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-from-other-namespaces
+  namespace: agent-onboarding
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+---
+#Network Policy to allow all traffic within NS for "agent-connect"
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-same-namespace-traffic
+  namespace: agent-connect
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+---
+#Network Policy to allow all traffic from ingress,prisma,system for "aagent-connect"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-ingress-prisma-system
+  namespace: agent-connect
+spec:
+  podSelector:
+    matchLabels:
+#      app: web
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels: 
+          purpose: system
+---    
+#Network Policy to deny all traffic from other NS for "agent-connect"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-from-other-namespaces
+  namespace: agent-connect
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+---
+#Network Policy to allow all traffic within NS for "apps-portal"
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-same-namespace-traffic
+  namespace: apps-portal
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+---
+#Network Policy to allow all traffic from ingress,prisma,system for "apps-portal"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-ingress-prisma-system
+  namespace: apps-portal
+spec:
+  podSelector:
+    matchLabels:
+#      app: web
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels: 
+          purpose: system          
+---    
+#Network Policy to deny all traffic from other NS for "apps-portal"
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: deny-from-other-namespaces
+  namespace: apps-portal
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
